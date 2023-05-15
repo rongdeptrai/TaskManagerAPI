@@ -47,6 +47,11 @@ namespace TaskManagerAPI.Data
 
         }
         public DbSet<Models.Domain.Task> Tasks { get; set; }
+        public DbSet<TaskList> TaskLists { get; set; }
+
+        public DbSet<TaskManagerAPI.Models.Domain.Todo> Todo { get; set; } = default!;
+        public DbSet<TaskManagerAPI.Models.Domain.TodoProgress> TodoProgress { get; set; } = default!;
+
 
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskManagerAPI.Data;
+using TaskManagerAPI.Repositories.TaskList;
 using TaskManagerAPI.Repositories.Token;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
 builder.Services.AddScoped<ITokenRepository,TokenRepository>();
+builder.Services.AddScoped<ITaskListRepository, TaskListRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

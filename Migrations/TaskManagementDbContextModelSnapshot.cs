@@ -242,7 +242,18 @@ namespace TaskManagerAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Attachment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Executor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -250,12 +261,81 @@ namespace TaskManagerAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Seq")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("TaskListId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("TaskListId");
+
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.TaskList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskLists");
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.Todo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("Todo");
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.TodoProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Seq")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TodoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TodoId");
+
+                    b.ToTable("TodoProgress");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -307,6 +387,48 @@ namespace TaskManagerAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.Task", b =>
+                {
+                    b.HasOne("TaskManagerAPI.Models.Domain.TaskList", null)
+                        .WithMany("Task")
+                        .HasForeignKey("TaskListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.Todo", b =>
+                {
+                    b.HasOne("TaskManagerAPI.Models.Domain.Task", null)
+                        .WithMany("Todos")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.TodoProgress", b =>
+                {
+                    b.HasOne("TaskManagerAPI.Models.Domain.Todo", null)
+                        .WithMany("Progress")
+                        .HasForeignKey("TodoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.Task", b =>
+                {
+                    b.Navigation("Todos");
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.TaskList", b =>
+                {
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("TaskManagerAPI.Models.Domain.Todo", b =>
+                {
+                    b.Navigation("Progress");
                 });
 #pragma warning restore 612, 618
         }
